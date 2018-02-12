@@ -29,6 +29,30 @@
  *  * bootmain() in this file takes over, reads in the kernel and jumps to it.
  **********************************************************************/
 
+/*这是一个简单粗略的boot loader，它唯一的工作就是 
+从硬盘的第一个扇区启动格式为ELF的内核镜像 
+ 
+硬盘布局 
+这个程序（包括boot.S和main.c）组成了bootloader， 
+它应该存储在硬盘的第一个扇区 
+ 
+第二个扇区存储着内核映像 
+ 
+内核映像必须为ELF格式的 
+ 
+启动步骤 
+当CPU启动时，它加载BIOS到内存中并且执行BIOS 
+ 
+BIOS程序初始化设备，设置中断例程，并且将启动装置（例如硬盘） 
+中的第一个扇区的内容加载到内存，并且跳转到那里 
+ 
+假设这个bootloader存储在硬盘的第一个扇区，这个代码从BIOS接收了CPU控制权 
+ 
+控制从boot.S文件开始--这个文件设置了保护模式和一个栈，这样 
+C代码就可以运行了，然后再调用bootmain() 
+ 
+这个文件中的bootmain函数接过控制权之后，读取内核文件并且跳转到内核*/  
+
 #define SECTSIZE	512
 #define ELFHDR		((struct Elf *) 0x10000) // scratch space
 
