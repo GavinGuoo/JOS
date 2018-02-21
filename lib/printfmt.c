@@ -7,6 +7,8 @@
 #include <inc/string.h>
 #include <inc/stdarg.h>
 #include <inc/error.h>
+//#include <inc/csa.h>
+int csa = 0;
 
 /*
  * Space or zero padding and a field width are supported for the numeric
@@ -90,6 +92,8 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
 
 	while (1) {
 		while ((ch = *(unsigned char *) fmt++) != '%') {
+			if (ch == '\0')
+				csa = 0x0700;
 			if (ch == '\0')
 				return;
 			putch(ch, putdat);
@@ -186,6 +190,10 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
 			for (; width > 0; width--)
 				putch(' ', putdat);
 			break;
+		case 'm':
+			num = getint(&ap, lflag);
+			csa = num;
+			break;
 
 		// (signed) decimal
 		case 'd':
@@ -206,9 +214,8 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
 		// (unsigned) octal
 		case 'o':
 			// Replace this with your code.
-			putch('X', putdat);
-			putch('X', putdat);
-			putch('X', putdat);
+			num = getuint(&ap, lflag);
+			base = 8;
 			break;
 
 		// pointer
